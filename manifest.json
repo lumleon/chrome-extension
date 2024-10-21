@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "HTTP Response Listener",
+  "version": "1.0",
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "storage",
+    "http://*/",
+    "https://*/"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

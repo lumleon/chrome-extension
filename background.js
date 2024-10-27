@@ -18,6 +18,7 @@ chrome.webRequest.onCompleted.addListener(
     })
     .then(response => {
       if (!response.ok) {
+        //TODO: send mqtt message alert
         console.error('Failed to save data:', response.statusText);
       }
     })

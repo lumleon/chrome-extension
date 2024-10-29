@@ -1,89 +1,90 @@
-# chrome-extension
-Creating a Chrome extension that listens in real-time to HTTP responses and saves them to an MSSQL server involves several steps. Here's a high-level overview and a basic implementation guide:
-#Overview
-1. Manifest File: Define the extension's permissions and background scripts.
-2. Background Script: Use the chrome.webRequest API to listen for HTTP responses.
-3. Data Handling: Send the captured data to a server-side API that interacts with the MSSQL database.
-4. Server-Side API: Create a Node.js (or similar) server that connects to the MSSQL database and saves the data.
+Encrypting a Chrome extension for production involves a few key steps to secure your code and prepare it for distribution. Here's a guide to help you do that:
 
-# Create the Server-Side API
-You can use Node.js with the mssql package to connect to your MSSQL database.
+# 1. Minify Your Code
+Minify your JavaScript and CSS files to obfuscate the code and reduce file size. Use tools like UglifyJS for JavaScript and cssnano for CSS.
 
-  Set up your Node.js environment:
-  bash
-
- 
-  mkdir http-response-listener-server
-  cd http-response-listener-server
-  npm init -y
-  npm install express body-parser mssql
-  
-  ## Create the server code: Create a file named server.js:
-  
-      const express = require('express');
-      const bodyParser = require('body-parser');
-      const sql = require('mssql');
-      
-      const app = express();
-      app.use(bodyParser.json());
-      
-      // MSSQL configuration
-      const config = {
-        user: 'your_username',
-        password: 'your_password',
-        server: 'your_server', // e.g., 'localhost'
-        database: 'your_database',
-        options: {
-          encrypt: true, // Use this if you're on Azure
-          trustServerCertificate: true // Change to true for local dev / self-signed certs
-        }
-      };
-      
-      sql.connect(config).then(pool => {
-        if (pool.connected) {
-          console.log('Connected to MSSQL');
-        }
-      
-      app.post('/save', async (req, res) => {
-          const { url, statusCode, responseHeaders, timestamp } = req.body;
-      
-          try {
-            await pool.request()
-              .input('url', sql.VarChar, url)
-              .input('statusCode', sql.Int, statusCode)
-              .input('responseHeaders', sql.NVarChar, JSON.stringify(responseHeaders))
-              .input('timestamp', sql.DateTime, timestamp)
-              .query('INSERT INTO HttpResponseLogs (url, statusCode, responseHeaders, timestamp) VALUES (@url, @statusCode, 
-                    @responseHeaders, @timestamp)');
-      
-            res.status(200).send('Data saved successfully');
-          } catch (error) {
-            console.error('Error saving data:', error);
-            res.status(500).send('Error saving data');
-          }
-        });
-      }).catch(err => {
-        console.error('SQL connection error:', err);
-      });
-      
-      app.listen(3000, () => {
-        console.log('Server is running on port 3000');
-      });
-
-#   Run the Server
-Run your server with:
+## Minify JavaScript
+Install UglifyJS:
 
     bash
-    node server.js
-  
-# Final Steps
-Load the extension: Go to chrome://extensions/, enable "Developer mode", and load your unpacked extension.
-Test: Open a new tab and perform some HTTP requests to see if the data gets logged in your MSSQL database.
 
-# Security Considerations
-Ensure proper validation and sanitation of incoming data.
-Use HTTPS for secure communication between the extension and server.
-Implement authentication for your server API to prevent unauthorized access.
+    npm install -g uglify-js
 
-# Conclusion
-This guide provides a foundational setup for a Chrome extension that listens for HTTP responses and saves them to an MSSQL server. You can expand upon this by adding error handling, user interfaces, and additional features as necessary.
+Minify your JavaScript files:
+
+    bash
+
+    uglifyjs background.js --compress --mangle --output background.min.js
+    uglifyjs popup.js --compress --mangle --output popup.min.js
+
+##Minify CSS
+
+Install cssnano:
+
+    bash
+
+    npm install -g cssnano-cli
+
+Minify your CSS files:
+
+    bash
+
+    cssnano styles.css styles.min.css
+
+# 2. Update Manifest File
+Update your manifest.json to point to the minified files:
+
+    json
+
+    {
+    "manifest_version": 3,
+    "name": "SpaceX Data Fetcher",
+    "version": "1.0",
+    "permissions": ["alarms", "storage"],
+    "background": {
+        "service_worker": "background.min.js"
+    },
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+        "16": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png"
+        }
+    }
+    }
+
+# 3. Secure Your Extension
+
+    * Content Security Policy (CSP): Ensure your manifest.json includes a CSP to prevent injection attacks.
+
+        json
+
+        {
+        "content_security_policy": {
+            "extension_pages": "script-src 'self'; object-src 'self'"
+        }
+        }
+
+    * Avoid Inline Scripts: Chrome extensions with manifest_version: 3 should avoid inline scripts. If necessary, use external scripts.
+
+## 4. Pack the Extension
+Use Chrome's extension packer to create a .crx file for distribution.
+
+    1. Go to chrome://extensions/.
+    2. Enable "Developer mode".
+    3. Click "Pack extension".
+    4. Select your extension’s directory.
+    5. Chrome will generate a .crx file and a private key.
+
+## 5. Distribute the Extension
+Chrome Web Store: Submit your .crx to the Chrome Web Store for public distribution.
+Enterprise Deployment: Use management tools to deploy internally within an organization.
+
+## 6. Test Thoroughly
+Before releasing, ensure:
+
+All functionalities work as expected.
+No sensitive information is exposed.
+Compliance with Chrome Web Store policies.
+This process helps prepare and secure your Chrome extension for production use. Always keep security best practices in mind when handling sensitive information.

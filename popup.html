@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
-  <title>SpaceX Data Fetcher</title>
-</head>
-<body>
-  <div class="popup-container">
-    <input type="text" placeholder="Base URL" value="https://spacex-production.up.railway.app/" disabled>
-    <button id="save">Save</button>
-    <div class="intervals">
-      <div>0</div>
-      <div>60</div>
-      <label>Interval</label>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="styles.css">
+    <title>SpaceX Data Fetcher</title>
+  </head>
+  <body>
+    <div class="popup-container">
+      <input type="text" placeholder="Base URL" value="https://spacex-production.up.railway.app/" disabled="disabled">
+      <button id="save">Save</button>
+      <div class="intervals">
+        <br>
+        <input type="text" placeholder="Query 1" value=" " disabled="disabled">
+        <label>60 s</label>
+      </div>
+      <br>
+      <input type="text" placeholder="Query 1" value=" " disabled="disabled">
+      <label>300 s</label>
     </div>
+    <br>
     <button id="start">Start Capture</button>
-  </div>
-  <script src="popup.js"></script>
-</body>
+    <script src="popup.js"></script>
+  </body>
 </html>

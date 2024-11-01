@@ -17,19 +17,42 @@ Minify your JavaScript files:
     uglifyjs background.js --compress --mangle --output background.min.js
     uglifyjs popup.js --compress --mangle --output popup.min.js
 
-##Minify CSS
+## Minify CSS
 
-Install cssnano:
+The warning you're seeing is because cssnano or one of its dependencies is using the deprecated punycode module. To resolve this, you can use an alternative CSS minification tool that doesn't have this dependency issue.
+
+## Alternative CSS Minification Tools
+PostCSS with cssnano: Instead of using the global cssnano-cli, use PostCSS with cssnano as a plugin.
+Setup with PostCSS
+
+Create a package.json file if you don't have one:
+    bash
+    npm init -y
+
+Install necessary packages:
+    
+    bash
+    npm install postcss-cli cssnano
+
+Create a PostCSS configuration file (postcss.config.js):
+javascript
+
+
+    module.exports = {
+      plugins: [
+        require('cssnano')({
+          preset: 'default',
+        }),
+      ],
+    };
+
+Run PostCSS to Minify CSS:
 
     bash
+    npx postcss styles.css -o styles.min.css
 
-    npm install -g cssnano-cli
+This setup ensures you are using the latest version of cssnano without the deprecated module issue. PostCSS is a powerful tool that provides more flexibility and control over your CSS processing.
 
-Minify your CSS files:
-
-    bash
-
-    cssnano styles.css styles.min.css
 
 # 2. Update Manifest File
 Update your manifest.json to point to the minified files:

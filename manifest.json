@@ -14,4 +14,11 @@
         "128": "icon.png"
       }
     }
+      "web_accessible_resources": [
+    {"resources": ["popup.html","styles.css", "popup.js" ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
   }

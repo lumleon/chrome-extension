@@ -25,6 +25,7 @@ function saveDataToMSSQL(queryName, data) {
       .then(data => {
         console.log(data);
         saveDataToMSSQL(queryName, data);
+        postMQtt();
       })
       .catch(error => console.error(error));
   }
